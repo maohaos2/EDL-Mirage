@@ -1,0 +1,28 @@
+# Reverse Prior network
+args=(
+  --method prior
+  --dataset_name CIFAR10
+  --architecture vgg
+  --hidden_dims 64 64 64
+  --num_epoch 100
+  --batch_size 64
+  --lr 2.5e-4
+  --early_stop
+  --latent_dim_local 6
+  --use_ood 1 # Use OOD!
+  --ood_data CIFAR100
+  --ood_weight 5
+  --no_density 1 # No density estimator
+  --prior 1.
+  --early_stop_patience 10
+  --loss_type UnifiedRev
+  --saving_criterion acc
+  --validation_frequency 2
+)
+num_data_list=(50000)
+reg_weight_list=("1e-4")
+for reg_weight in "${reg_weight_list[@]}"; do
+  for num_data in "${num_data_list[@]}"; do
+    python scripts/eval_real_data_unified.py "${args[@]}" --seed_list 0 1 2 3 4 --num_data_list $num_data --reg_weight $reg_weight
+  done
+done
